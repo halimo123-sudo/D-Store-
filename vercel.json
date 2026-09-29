@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
   "installCommand": "npm install",
-  "outputDirectory": ".output/public",
+  "outputDirectory": "dist/client",
   "framework": null,
   "env": {
     "VITE_SUPABASE_PROJECT_ID": "uztevnnrokbxuikuputz",
