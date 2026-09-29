@@ -260,17 +260,45 @@ function emit() {
   listeners.forEach((l) => l());
 }
 
+function applyRemote(remote: {
+  products?: unknown;
+  reviews?: unknown;
+  settings?: unknown;
+}) {
+  state = {
+    ...state,
+    products: Array.isArray(remote.products) && remote.products.length
+      ? (remote.products as Product[])
+      : state.products,
+    reviews: (remote.reviews as Review[] | undefined) ?? state.reviews,
+    settings: { ...defaultSettings, ...(remote.settings ?? {}) },
+  };
+  emit();
+}
+
 async function pull() {
   try {
     const remote = await getShopState();
-    if (!remote) return;
-    state = {
-      ...state,
-      products: remote.products?.length ? (remote.products as Product[]) : state.products,
-      reviews: (remote.reviews as Review[] | undefined) ?? state.reviews,
-      settings: { ...defaultSettings, ...(remote.settings ?? {}) },
-    };
-    emit();
+    if (remote) {
+      applyRemote(remote);
+      return;
+    }
+  } catch {
+    /* serveur indisponible (hébergement statique) : lecture publique directe */
+  }
+  try {
+    // Secours pour la version statique (Vercel) : le catalogue est public,
+    // la base autorise sa lecture anonyme en lecture seule.
+    const { supabase } = await import("@/integrations/supabase/client");
+    const { data } = await supabase
+      .from("shop_state")
+      .select("data")
+      .eq("id", "main")
+      .maybeSingle();
+    const remote = data?.data as
+      | { products?: unknown; reviews?: unknown; settings?: unknown }
+      | null;
+    if (remote) applyRemote(remote);
   } catch {
     /* garde les valeurs par défaut */
   }
