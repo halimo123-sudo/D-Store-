@@ -1,0 +1,1 @@
+var e=`/assets/logo-dstore-CaeGk7fN.png`;export{e as t};
