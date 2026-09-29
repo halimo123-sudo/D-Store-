@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ShoppingBag } from "lucide-react";
 import hero from "@/assets/hero-market.jpg";
 import logoDstore from "@/assets/logo-dstore.png";
+import { Stars, StarPicker } from "@/components/Stars";
 import {
   categoryList,
   faqList,
@@ -15,7 +16,7 @@ import {
   productRef,
   type CustomerInfo,
 } from "@/lib/shop";
-
+import { createOrder } from "@/lib/shop.functions";
 
 const CUSTOMER_KEY = "djibouti-client-v1";
 
