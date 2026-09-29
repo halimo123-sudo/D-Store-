@@ -1,13 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
-  "outputDirectory": "dist/client",
+  "outputDirectory": "static",
   "framework": null,
-  "env": {
-    "VITE_SUPABASE_PROJECT_ID": "uztevnnrokbxuikuputz",
-    "VITE_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_2GB-ESDxysVJVW1BvJ_COg_pgzMUG6Z",
-    "VITE_SUPABASE_URL": "https://c--6ae3bf5b-0fe3-413c-b48e-16f7ebf0028f-prod.lovable.cloud"
-  },
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
