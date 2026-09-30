@@ -279,7 +279,14 @@ function applyRemote(remote: {
 async function pull() {
   try {
     const remote = await getShopState();
-    if (remote) {
+    // Sur un hébergement statique, la réponse peut être une page HTML :
+    // on n'accepte que de vraies données boutique.
+    if (
+      remote &&
+      typeof remote === "object" &&
+      (Array.isArray((remote as { products?: unknown }).products) ||
+        "settings" in (remote as object))
+    ) {
       applyRemote(remote);
       return;
     }
