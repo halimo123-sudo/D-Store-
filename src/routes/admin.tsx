@@ -265,6 +265,7 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
             </button>
           </div>
         </div>
+        <IntrusionAlert />
         <div className="mx-auto w-full max-w-4xl flex gap-2 px-4 pb-3 overflow-x-auto no-scrollbar">
           {TABS.map((t) => (
             <button
@@ -1350,6 +1351,48 @@ function SecurityAssistant() {
           {analysis}
         </div>
       )}
+    </div>
+  );
+}
+
+function IntrusionAlert() {
+  const load = useServerFn(listAudit);
+  const [fails, setFails] = useState<AuditRow[]>([]);
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const res = await load();
+        const since = Date.now() - 7 * 24 * 3600 * 1000;
+        const f = res.entries.filter(
+          (e) => !e.success && e.action.startsWith("Connexion") && new Date(e.created_at).getTime() > since,
+        );
+        setFails(f);
+        if (f.length && typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate?.(300);
+      } catch {
+        /* ignore */
+      }
+    };
+    void check();
+    const id = setInterval(check, 30000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  if (!fails.length || seen) return null;
+  const last = fails[0]!;
+  return (
+    <div className="mx-auto w-full max-w-4xl px-4 pb-3">
+      <div className="p-3 rounded-xl border border-destructive bg-destructive/10 text-destructive text-sm flex items-start justify-between gap-3">
+        <div>
+          <p className="font-bold">⚠ Alerte : {fails.length} tentative(s) de connexion refusée(s) (7 derniers jours)</p>
+          <p className="text-xs mt-1">
+            Dernière : {new Date(last.created_at).toLocaleString("fr-FR")} — identifiant tapé « {last.actor} » — {last.details}
+          </p>
+        </div>
+        <button onClick={() => setSeen(true)} className="text-xs font-bold underline shrink-0">
+          OK
+        </button>
+      </div>
     </div>
   );
 }
