@@ -1,0 +1,28 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "",
+  "installCommand": "",
+  "outputDirectory": "static",
+  "framework": null,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/_serverFn/:path*",
+      "destination": "https://d-stores.lovable.app/_serverFn/:path*"
+    },
+    {
+      "source": "/((?!_serverFn/).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
